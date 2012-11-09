@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div id='everythingSortableList'>
+           <h3>This will hold the list of all the songs, sortable on artist/song name/album name</h3>
+           (div id = 'everythingSortableList' / style.css ) 
+
+            {% for song in songs %}
+                <p> {{ song }} </p>
+            {% endfor %}
+            (remember that can just call song, because you should have made __unicode__ get its thing from NAME var)
+    </div>
+
+{% endblock %}

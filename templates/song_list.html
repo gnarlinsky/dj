@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+<!--  placeholder for current/just played song
+{% block just_played %} 
+   {% if song.name %}  
+       <h3> Just played/selected: </h3>
+        {{song.name}}<br> {{song.get_artist}}<br>{{song.album}}
+    {% endif %}
+
+{% endblock %}  
+-->
+
+<!--
+{% block search_jukebox %}
+    <h3>Search for song, artist, or album:</h3>
+    <form action="/search/" method="get">
+        <input type="text" name="search_for">
+        <input type="submit" value="Search">
+    </form><br>
+{% endblock %} 
+-->
+
+
+{% block content %}
+<div id="the_big_songs_table">
+{% if object_list %}
+<center>
+     {% if user.is_authenticated %}
+    <p>Removed songs/albums are grayed out; blocked songs are in red.<br>
+    {% endif %}
+    <!-- the actual table of all songs, constructed for Owners or Listeners -->
+    Click on a heading to sort.</p>
+    <table>
+        <thead><tr>
+
+<!--            <th width=10px><a href="?sort_by=id">(temp) id</a></th> -->
+            <th width=10px class="empty"></th>
+            
+
+            <th width=100px><a href="?sort_by=name">Song</a></th>
+            <th width=75px><a href="?sort_by=album">Album</a></th>
+            <th width=75px>Artist</th>
+           <!-- <th><a href="?sort_by=artist">Artist</a></th>   choosing by artist is not a use case -->
+            <th width=10px><a href="?sort_by=-playcount">Song play count</a></th>
+
+
+            {% if user.is_authenticated %}
+                <th width=10px>Remove from/ Add to jukebox  </th>
+                <th width=10px>Block/ Unblock song </th>
+            {% endif %}
+            <!-- Add to jukebox (so I guess actually not in jukebox, maybe rows would be grayed out-->
+        </tr></thead>  
+        <tbody>
+
+
+        <!-- The conditional logic here is extremely ad-hoc and messy! Rework; for clarity, divide into authenticated view and non-authenticated...
+             Some repetition in table structure is worth it for the clarity, in this case...  -->
+        {% for song in object_list %}
+
+                {% if not song.get_removed_status and not song.blocked %}
+                    <tr>
+                     <!--   <td>{{song.id}}</td> -->
+                        <td>
+                            <form action = "/play/" method="get">   
+                                <input type="hidden" name="song_id" value='{{ song.id }}'>
+                                <input type="submit" name="submit" value="Play">
+                            </form>
+                        </td>
+                         <td>{{ song.name }}</td>
+                        <td>{{ song.album}}</td>
+                        <td>{{ song.get_artist }}</td>
+                        <td>{{ song.playcount }}</td>
+                {% endif %}
+                {% if song.get_removed_status and user.is_authenticated%}  
+                    <tr class="grayed_out">
+                     <!--   <td>{{song.id}}</td> -->
+                        <td></td>
+                         <td>{{ song.name }}</td>
+                        <td>{{ song.album}}</td>
+                        <td>{{ song.get_artist }}</td>
+                        <td>{{ song.playcount }}</td>
+                {% else %}
+                    {% if song.blocked and user.is_authenticated %}  
+                        <tr class="redded_out">
+                     <!--   <td>{{song.id}}</td> -->
+                            <td></td>
+                            <td>{{ song.name }}</td>
+                            <td>{{ song.album}}</td>
+                            <td>{{ song.get_artist }}</td>
+                            <td>{{ song.playcount }}</td>
+                   {% endif %}
+               {% endif %}
+
+
+                {% if song.get_removed_status and user.is_authenticated and not song.blocked %}  
+                    <td>
+                    <form action="add_album/" method="post">
+                        <input type="hidden" name="song_id" value={{song.id}}>
+                        <input type="submit" name="submit"  value="Add album">
+                    </form>
+                    </td>
+                    <td></td>
+                {% else %} 
+                    {% if song.get_removed_status and user.is_authenticated and song.blocked %}  
+                        <td>
+                        <form action="add_album/" method="post">
+                            <input type="hidden" name="song_id" value={{song.id}}>
+                            <input type="submit" name="submit"  value="Add album">
+                        </form>
+                        </td>
+                        <td></td>
+                    {% else %}
+                        {% if not song.get_removed_status and user.is_authenticated and not song.blocked %}  
+                            <td>
+                                <form action="remove_album/" method="post">
+                                <input type="hidden" name="song_id" value={{song.id}}>
+                                <input type="submit" name="submit"  value="Remove album">
+                                </form>
+                            </td>
+                            <td>
+                                <form action="block_song/" method="post">
+                                <input type="hidden" name="song_id" value={{song.id}}>
+                                <input type="submit" name="submit"  value="Block song">
+                                </form>
+                            </td>
+                        {% else  %}
+                            {% if not song.get_removed_status and user.is_authenticated and song.blocked %}  
+                            <td>
+                                <form action="remove_album/" method="post">
+                                <input type="hidden" name="song_id" value={{song.id}}>
+                                <input type="submit" name="submit"  value="Remove album">
+                                </form>
+                            </td>
+                            <td>
+                                <form action="unblock_song/" method="post">
+                                <input type="hidden" name="song_id" value={{song.id}}>
+                                <input type="submit" name="submit"  value="UNblock song">
+                                </form>
+                            </td>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                   </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</center>
+{% else %}
+    <p> no objects_list ! </p>
+    <p>    context: {{ context }}</p>
+    <p>locals: {{ locals }}</p>
+    <p>request: {{ request}}</p>
+{% endif %}
+</div> <!--- the_big_songs_table -->
+{% endblock %}  
+
+

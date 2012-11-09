@@ -1,0 +1,52 @@
+<html>
+<head>
+    <link rel='stylesheet' type='text/css' href='/static/video1.css' />
+    <link rel='stylesheet' type='text/css' href='/static/style.css' /> <!-- for NK -->
+<head>
+
+<body>
+<div id="navbar"> 
+    <h1> Djukebox</h1>
+    <h3>Hello.</h3>
+</div> <!-- navbar --> 
+
+<div id='header'>
+    <div id="some_other_top_bar_thing"> 
+        <p> <a href='/list/'>List of all songs</a></p>
+        <p><a href='/covers/'>Covers flow thing</a> </p>
+    </div>
+
+
+    <div id="specifically_login_out_navbar">
+        {% comment %}
+        <p class="mynote">So there's a conditional here... 
+            IF this is coming from login.html, the form will fill the block 'login.'
+            Otherwise, the parent template (base.html) will fill it in with just the link to /login/. </p>
+        {% endcomment %}
+
+        {% if user.is_authenticated %} 
+               <p><a href="/logout/">Logout</a></p> 
+        {% else %} 
+             <p>{% block login %}<a href="/login/">Login</a>{% endblock %}</p> 
+             <p><a href="/register/">Register</a></p>
+        {% endif %}
+    </div>
+</div> <!-- header --> 
+
+    {% comment %}
+        <h1>AND THE CONTENT STARTS HERE..................  </h1>
+        <p> Parent (base.html) defaults to list.html if no child template has defined block content  (but of course the way I have it right now, list.html won't actually get the Songs if it's called like this)   But.. could I bring the songs in as extra_context through url?  .</p>
+    {% endcomment %}
+    <div id="pagecontainer">
+        {% block content %}
+        {% comment %}  no, including song_list below... is making the top navbar appear twice ....
+            {% include 'song_list.html' %}
+        {% endcomment %}
+        {% endblock %}
+    </div>
+
+
+
+</center>
+</body>
+</html>
