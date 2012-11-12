@@ -1,3 +1,10 @@
+# various craps #
+#################
+activate   # just link to activate ve
+my_helper_script.py
+nkDebugser.py
+db_archives     # like this for directories? 
+
 # Compiled source #
 ###################
 *.com
