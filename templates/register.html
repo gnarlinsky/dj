@@ -44,7 +44,7 @@
 
         <div class='register_div'>
             {% if form.password1.errors %}<p class='error'> {{ form.password1.errors }}</p>{%endif%}
-            <p><label for='password1' {% if form.password.errors %} class='error' {%endif%}>Password again:</label></p>
+            <p><label for='password1' {% if form.password1.errors %} class='error' {%endif%}>Password again:</label></p>
             <p>{{ form.password1 }}</p>
         </div>
         
@@ -58,7 +58,7 @@
         <p>upload a user pic or some shit...........  Not sure how to do that through a form (vs in admin interface)</p>
         </div>
 
-    <p><input type='image' src='/static/register.png/' alt='register' /></p>
+ <p><input type='submit' name='submit' value='Register' alt='register' /></p>
 
 
 

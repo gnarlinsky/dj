@@ -8,6 +8,11 @@ SETTINGS_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Dummy email backend to be used during development -- does nothing with
+# messages
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend' 
+
+
 ADMINS = (
      ('mmm', 'metametamad@gmail.com'),
 )
@@ -72,7 +77,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SETTINGS_ROOT,'beer','static'),
+    os.path.join(SETTINGS_ROOT,'djukebox','static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -122,6 +127,11 @@ TEMPLATE_DIRS = (
 #  authentication
 AUTH_PROFILE_MODULE = 'drinker.Drinker'
 
+# URL for @login_required decorator to use
+LOGIN_URL = '/login/'   # so any time you put the login_required decorator on a view, it'l go to /login/
+
+# URL for redirecting authenticated users
+LOGIN_REDIRECT_URL = '/profile/'  
 
 INSTALLED_APPS = (
     'django.contrib.auth',   # for user authentication
@@ -137,7 +147,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'beer',
-    'tinymce',
+    #'tinymce',
     'pages',
     'drinker',
     'djukebox',

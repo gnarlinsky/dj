@@ -95,12 +95,17 @@ p { background-color:transparent;}
 #pagecontainer {
     /*background: url('/static/wood.jpeg') repeat-y scroll center top #000000; */
     background-color:white;
-    margin: 0 auto;
-    margin-top:10px;
-    padding: 5px;
+    padding: 10px;
     position: relative;
     width: 800px;
     min-height: 400px; 
+    margin:auto;
+    margin-top:10px;
+    margin-bottom:10px;
+    -moz-border-radius:7px;
+    -webkit-border-radius:7px;  
+    border-radius:7px;
+    border:1px solid #148c99;
     font-weight: bold;
     font-size: 20px;
     font-family:"Georgia",serif}

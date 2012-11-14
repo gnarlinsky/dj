@@ -5,13 +5,26 @@ from drinker.forms import RegistrationForm, LoginForm
 from django.contrib.auth.models import User
 from drinker.models import Drinker
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+
+
+# if not logged in, send to login page that's defined in settings,
+# then bring them back
+@login_required
+def Profile(request):
+    if not request.user.is_authenticated():  # if not logged in... not required, sort of a safety net thing (right?)
+        return HttpResponseRedirect('/login/')
+    drinker = request.user.get_profile   # will return a drinker object
+    context = {'drinker': drinker}
+    return render_to_response('profile.html', context, context_instance=RequestContext(request))
 
 def DrinkerRegistration(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/profile/') # send user to profile if they're already registered
 
     if request.method == 'POST': # if they're submitting the form...
-        form = RegistrationForm(request.POST) # fill out registrationform with what's been posted
+        form = RegistrationForm(request.POST) # fill out registration form with what's been posted
 
         if form.is_valid():   # remember our custom validation in forms.py!
             # so at this point we know everything in the form is good

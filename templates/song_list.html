@@ -14,6 +14,9 @@
 {% block search_jukebox %}
     <h3>Search for song, artist, or album:</h3>
     <form action="/search/" method="get">
+        {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+        domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+        attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
         <input type="text" name="search_for">
         <input type="submit" value="Search">
     </form><br>
@@ -26,7 +29,8 @@
 {% if object_list %}
 <center>
      {% if user.is_authenticated %}
-    <p>Removed songs/albums are grayed out; blocked songs are in red.<br>
+    <p><div style="padding:4px;background-color:gray;color:darkgray;font-size:12px;font-style:normal; text-shadow:none;">Removed songs/albums are grayed out</div> 
+        <div style="padding:4px;background-color:darkred; color:white;font-size:12px;font-style:normal;">blocked songs are in red</div></p>
     {% endif %}
     <!-- the actual table of all songs, constructed for Owners or Listeners -->
     Click on a heading to sort.</p>
@@ -62,6 +66,9 @@
                      <!--   <td>{{song.id}}</td> -->
                         <td>
                             <form action = "/play/" method="get">   
+                                {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                                domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                                attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                                 <input type="hidden" name="song_id" value='{{ song.id }}'>
                                 <input type="submit" name="submit" value="Play">
                             </form>
@@ -95,6 +102,9 @@
                 {% if song.get_removed_status and user.is_authenticated and not song.blocked %}  
                     <td>
                     <form action="add_album/" method="post">
+                        {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                        domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                        attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                         <input type="hidden" name="song_id" value={{song.id}}>
                         <input type="submit" name="submit"  value="Add album">
                     </form>
@@ -104,6 +114,9 @@
                     {% if song.get_removed_status and user.is_authenticated and song.blocked %}  
                         <td>
                         <form action="add_album/" method="post">
+                            {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                            domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                            attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                             <input type="hidden" name="song_id" value={{song.id}}>
                             <input type="submit" name="submit"  value="Add album">
                         </form>
@@ -113,12 +126,16 @@
                         {% if not song.get_removed_status and user.is_authenticated and not song.blocked %}  
                             <td>
                                 <form action="remove_album/" method="post">
+                                {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                                domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                                attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                                 <input type="hidden" name="song_id" value={{song.id}}>
                                 <input type="submit" name="submit"  value="Remove album">
                                 </form>
                             </td>
                             <td>
                                 <form action="block_song/" method="post">
+                                    {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                                 <input type="hidden" name="song_id" value={{song.id}}>
                                 <input type="submit" name="submit"  value="Block song">
                                 </form>
@@ -127,14 +144,20 @@
                             {% if not song.get_removed_status and user.is_authenticated and song.blocked %}  
                             <td>
                                 <form action="remove_album/" method="post">
+                        {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                        domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                        attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
                                 <input type="hidden" name="song_id" value={{song.id}}>
                                 <input type="submit" name="submit"  value="Remove album">
                                 </form>
                             </td>
                             <td>
-                                <form action="unblock_song/" method="post">
-                                <input type="hidden" name="song_id" value={{song.id}}>
-                                <input type="submit" name="submit"  value="UNblock song">
+                                <form action="unblock_song" method="get">
+                                    {% csrf_token %} {% comment %} csrf token: cross-site request forgery token -- limits the posts from this form to the
+                                    domain the form is on, so can't actually submit to this form from an external domain; so will stop cross-site scripting
+                                    attacks. If embedding this from another domain, have to use @csrf_exempt decorator {% endcomment %}
+                                    <input type="hidden" name="song_id" value={{song.id}}>
+                                    <input type="submit" name="submit"  value="Unblock song">
                                 </form>
                             </td>
                             {% endif %}

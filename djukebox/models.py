@@ -1,19 +1,8 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 
-"""
-The Jukebox: a web-based application that provides a management and 
-operation interface for a jukebox.
 
-Kinds of users:
-- Listeners (may be anonymous)
-- Owners (named; are also Listeners)
-
-- A Jukebox: has many Albums
-- An Album: has many Songs
-            belongs to one Artist
-- An Artist: has many Albums
-
-"""
 
 class Artist(models.Model):
     slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
