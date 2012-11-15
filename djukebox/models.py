@@ -13,7 +13,8 @@ class Artist(models.Model):
         return self.album_set.all()
     
     # deal with this more intelligently, have to loop through albums and songs
-    def get_albums(self):
+    #def get_albums(self):
+    def get_songs(self):   # had get_albums, but this should be get_songs, right? 
         return self.album_set.all().song_set.all()
 
     class Meta:
@@ -55,8 +56,9 @@ class Song(models.Model):
     def get_artist(self):
         return self.album.artist
 
-    def increment_playcount(self):
-        self.playcount = self.playcount + 1
+    ###### ??????????????????????????????????  I have this in views...??????
+#    def increment_playcount(self):
+#        self.playcount = self.playcount + 1
 
     def __unicode__(self):
         return self.name
@@ -83,11 +85,14 @@ class Owner(models.Model):
     def __unicode__(self):
         return self.name    # not the user name, actually, it's provided by the user object....  wait.... what? 
 
-# create our user object to attach to our drinker object
-#########################  not really sure what's going on here, though............... ###################
-def create_owner_user_callback(sender, instance, **kwargs):
-    owner, new = Owner.objects.get_or_create(user=instance) # returns True if created, False if it already exists
+
+######################  stuff below here: part of class Owner...? or did I indent one too much? 
+
+    # create our user object to attach to our Owner object
+    #########################  not really sure what's going on here, though............... ###################
+    def create_owner_user_callback(sender, instance, **kwargs):
+        owner, new = Owner.objects.get_or_create(user=instance) # returns True if created, False if it already exists
 
 
-##### some birthday stuff kept getting screwed up here because something was being called before something else blah blah 
-#post_save.connect(create_owner_user_callback, User)   # when user object is created, register the post_save, and will call this function
+    ##### some birthday stuff kept getting screwed up here because something was being called before something else blah blah 
+    #post_save.connect(create_owner_user_callback, User)   # when user object is created, register the post_save, and will call this function

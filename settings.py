@@ -122,10 +122,10 @@ TEMPLATE_DIRS = (
     os.path.join(SETTINGS_ROOT,'templates')
 )
 
-# provide our get_profile() in drinker/views.py
-#  telling Django that this drinker object will provide a profile for
+# provide our get_profile() in djukebox/views.py
+#  telling Django that this Owner object will provide a profile for
 #  authentication
-AUTH_PROFILE_MODULE = 'drinker.Drinker'
+AUTH_PROFILE_MODULE = 'djukebox.Owner'
 
 # URL for @login_required decorator to use
 LOGIN_URL = '/login/'   # so any time you put the login_required decorator on a view, it'l go to /login/
@@ -146,10 +146,10 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'beer',
+    #'beer',
     #'tinymce',
-    'pages',
-    'drinker',
+    #'pages',
+    #'drinker',
     'djukebox',
 )
 
