@@ -32,7 +32,7 @@ old_youtube_vid_stuff
 # Logs and databases #
 ######################
 *.log
-*.sql
+#*.sql  # using the Django hook that looks for sql/<modelname>.sql files to to populate db with initial data
 *.sqlite
 
 # OS generated files #

@@ -1,5 +1,3 @@
-# Django settings for video1 project.
-
 import os
 
 # The directory containing this file will also contain the db, templates dir, lotsa stuff...
@@ -8,10 +6,8 @@ SETTINGS_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-# Dummy email backend to be used during development -- does nothing with
-# messages
+# Dummy email backend to be used during development -- does nothing with  messages
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend' 
-
 
 ADMINS = (
      ('mmm', 'metametamad@gmail.com'),
@@ -108,11 +104,9 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-#ROOT_URLCONF = 'video1.urls'
 ROOT_URLCONF = 'urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-#WSGI_APPLICATION = 'video1.wsgi.application'
 WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
@@ -146,10 +140,6 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    #'beer',
-    #'tinymce',
-    #'pages',
-    #'drinker',
     'djukebox',
 )
 
