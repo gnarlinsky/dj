@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', views.logoutRequest),
     url(r'^register/$', views.ownerRegistration),  
 #    url(r'^profile/$', direct_to_template, {'template': 'profile.html'} ),
-    (r'^profile/$', views.profile),
+    (r'^profile/$', views.send_to_profile),
 
     ###############################################################
     #  password resetting 

@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Artist(models.Model):
-    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     playcount = models.IntegerField()
  
     def __unicode__(self):
@@ -22,8 +22,8 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
-    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     artist = models.ForeignKey(Artist)
     playcount = models.IntegerField()
     removed = models.BooleanField() 
@@ -42,8 +42,8 @@ class Album(models.Model):
 # assuming this does not occur here (avoiding many-to-many relationship)
 ###########################################################################
 class Song(models.Model):
-    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
     album = models.ForeignKey(Album) 
     playcount = models.IntegerField()
     blocked = models.BooleanField() 
@@ -55,6 +55,14 @@ class Song(models.Model):
    
     def get_artist(self):
         return self.album.artist
+
+
+# ********************** # ********************** # ********************** # **********************
+# but let's say I want to specify in admin.py that I want artist in list_display.... Well, I can't
+# just do 'artist'... So does this mean that I should have an actual variable here somehow, not
+# just get_artist()?  ?????????????????   Or ********************  artist = album.artist????
+# ********************** # ********************** # ********************** # **********************
+
 
     ###### ??????????????????????????????????  I have this in views...??????
 #    def increment_playcount(self):

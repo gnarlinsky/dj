@@ -137,8 +137,10 @@ from django.contrib.auth.decorators import login_required
 
 # if not logged in, send to login page that's defined in settings,
 # then bring them back
+############  Wait, no, that doesn't work for me right here.......  I'm seeing this http://localhost:8080/login/?next=/profile/, but after submit it does NOT go to profile... but it HAS registered them. 
 @login_required
-def profile(request):
+def send_to_profile(request):
+    print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"*2
     if not request.user.is_authenticated():  # if not logged in... not required, sort of a safety net thing (right?)
         return HttpResponseRedirect('/login/')
     owner = request.user.get_profile   # will return an Owner object
@@ -152,7 +154,7 @@ def ownerRegistration(request):
     if request.method == 'POST': # if they're submitting the form...
         form = RegistrationForm(request.POST) # fill out registration form with what's been posted
 
-        if form.is_valid():   # remember our custom validation in forms.py!
+        if form.is_valid():   # remember our custom validation in forms.py! [update: well... not anymore] 
             # so at this point we know everything in the form is good
             user = User.objects.create_user(username = form.cleaned_data['username'], \
                     email = form.cleaned_data['email'], \
@@ -172,7 +174,9 @@ def ownerRegistration(request):
    #         owner.birthday = form.cleaned_data['birthday']
             owner = Owner(user=user, name=form.cleaned_data['name'], birthday=form.cleaned_data['birthday'])
             owner.save()     # so this is in place of automatically creating the profile...  we have to set birthday when we create the object because of the blah blah is NULL error. So this is MANUAL, keep that in mind...  nk
+            print "***********************************************************************************"
             return HttpResponseRedirect('/profile/')  # or just HttpResponse????
+            #############  actually I just want to return a "hi, you're registered, ______." And maybe log them in already.   
 
         else:  # form doesn't validate
             return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
@@ -197,10 +201,10 @@ def loginRequest(request):
             password = form.cleaned_data['password']
 
             # when you log someone in:  (1) call authenticate, then (2) call login
-            drinker = authenticate(username =username, password=password)   # return a user object if 
+            owner = authenticate(username =username, password=password)   # return a user object if 
                             #password is valid, otherwise returns null
-            if drinker is not None:   # authentication succeeded
-                login(request, drinker)
+            if owner is not None:   # authentication succeeded
+                login(request, owner)
                 # returning this way below because already logged in... although this shouldn't actually happen, because 
                 #   there's no form/submit button available to someone who is already logged in (although I think this could be faked)
                 #return HttpResponseRedirect('/profile/')   

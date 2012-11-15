@@ -46,10 +46,11 @@ h2 { font-size:15pt;  text-align:center; margin:0pt; }
 h3 {font-size:13pt;  text-align:center;margin:0pt;  padding-top:12pt;} 
 
 /* links */
-a {text-decoration: underline;  color:lightblue; text-shadow:1px 1px 1px  #222222;}
+/*a {text-decoration: none;  color:lightblue; text-shadow:1px 1px 1px  #222222;} */
+a {text-decoration: none;  color:black; text-shadow:1px 1px 1px  white;} */
 a:hover { 
     /* #ffff66 or #fff33; */
-    color: gold; text-shadow: 10px 10px 10px 10px black;
+    color: green; text-shadow: 10px 10px 10px 10px black;
         }
 
 
