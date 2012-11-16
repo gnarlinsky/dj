@@ -1,16 +1,52 @@
 body,p { 
-font-size:12pt; font-family: "Georgia", serif;
-    text-shadow:none; text-align:center;  margin:0pt;
-    padding-bottom:10pt;    font-weight:normal; }   
+    font-size:12pt; 
+    font-family: "Georgia", serif;
+    text-shadow:none; 
+    text-align:center;  
+    margin:0pt;
+    padding:10pt;
+    font-weight:normal; }   
 
 /* my div's */
+#the_big_songs_table {
+    margin:20px;
+}
+
+.highlight {
+    padding:5px;
+    padding-left:10px;
+    padding-right:10px;
+    font-size:12px;
+    font-weight:normal; 
+    text-shadow:none; 
+    -mox-border-radius:17px 17px 0px 0px;
+    -webkit-border-radius:17px;
+    -webkit-border-radius:17px;
+    border-radius:17px;
+    border-radius:17px;
+    display: inline-block;
+}
+
+
+#gray_highlight {
+    background-color:gray;
+    color:darkgray;
+}
+
+#red_highlight {
+    background-color:#b60000; /* reddish */
+    color:white;
+}
+
+
+
 #everythingSortableList {
 /*    background: url('/static/some_picture.jpg') repeat-y scroll center top #148c99; */
     background-color: #148c99
     margin:0 auto;
     padding: 5px;
     position: relative;
-    min-height: 600px;
+    /* min-height: 600px; */
     font-size: 16px;
     font-weight: normal;
     color: black;
@@ -47,44 +83,13 @@ h3 {font-size:13pt;  text-align:center;margin:0pt;  padding-top:12pt;}
 
 /* links */
 /*a {text-decoration: none;  color:lightblue; text-shadow:1px 1px 1px  #222222;} */
-a {text-decoration: none;  color:black; text-shadow:1px 1px 1px  white;} */
+a {
+text-decoration: none;  color:black; text-shadow:1px 1px 1px  white;
+} 
 a:hover { 
     /* #ffff66 or #fff33; */
-    color: green; text-shadow: 10px 10px 10px 10px black;
-        }
+    color:lightyellow; text-shadow: 5px 5px 5px 5px black;
+}
 
 
 
-
-/* links */
-
-
-
-
-
-
-
-/*.table */
-table { 
-    font-family: "Georgia", serif; font-size: 12px;font-weight: bold;
-    font-style: normal;    line-height: 1.4em; border-spacing:2px;}
-th.empty { 
-    background-color:white; border:white}
-th{ 
-    background-color: #148c99; -moz-border-radius:7px 7px 0px 0px;
-    -webkit-border-top-left-radius:7px;  -webkit-border-top-right-radius:7px;
-    border-top-left-radius:7px; border-top-right-radius:7px;
-    border:10px solid #148c99; border-bottom:0px;
-    color: white; text-shadow:1px 1px 1px  #222222;
-    padding-left:3px;padding-right:3px;padding-top:0px;padding-bottom:6px; }
-
-td      {  padding-left:3px; padding-right:3px; padding-bottom:2px; padding-top:2px;
-        font-weight: normal;    font-size: 12px; text-align:center;
-        background-color:#97eaf4;  -moz-border-radius:1px;  -webkit-border-radius:1px;
-        border-radius:1px; color:#000; border-top:0px }
-/* gray out songs that have been removed */
-tr.grayed_out td{ background-color:gray; color:#aaa;  }
-tr.redded_out td{
-    background-color:#b60000;
-    color:#fff;
- }

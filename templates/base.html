@@ -7,10 +7,14 @@
 <body>
 
 <div id="outer_div" class="curvy_border">
-<div id="navbar" class="curvy_border"> 
+<div id="top_hello" class="curvy_border"> 
     <h1> Djukebox</h1>
-    <h3>Hello.</h3>
-</div> <!-- navbar --> 
+    {% if user.is_authenticated %}
+        <h3>Hi, {{ user.username }}.</h3>
+    {% else %}
+        <h3>Hello, anonymous listener.</h3>
+    {% endif %}
+</div> <!-- top_hello --> 
 
 <div id='header'>
     <div id="some_other_top_bar_thing" class="curvy_border"> 
@@ -19,7 +23,7 @@
     </div>
 
 
-    <div id="specifically_login_out_navbar" class="curvy_border">
+    <div id="specifically_login_out_top_hello" class="curvy_border">
         {% comment %}
         <p class="mynote">So there's a conditional here... 
             IF this is coming from login.html, the form will fill the block 'login.'
@@ -35,17 +39,15 @@
     </div>
 </div> <!-- header --> 
 
-    {% comment %}
-        <h1>AND THE CONTENT STARTS HERE..................  </h1>
-        <p> Parent (base.html) defaults to list.html if no child template has defined block content  (but of course the way I have it right now, list.html won't actually get the Songs if it's called like this)   But.. could I bring the songs in as extra_context through url?  .</p>
-    {% endcomment %}
-    <div id="pagecontainer" >
+    <div id="pagecontainer">
         {% block content %}
-        {% comment %}  no, including song_list below... is making the top navbar appear twice ....
+        {% comment %}  no, including song_list below... is making the top top_hello appear twice ....
             {% include 'song_list.html' %}
         {% endcomment %}
         {% endblock %}
     </div>
+
+
 </div> <!-- outer_div -->
 
 

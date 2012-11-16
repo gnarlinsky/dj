@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     # If just want a simple page, don't need to access db, etc:
     # so don't need to write your own view; this will just call song_list.html
-    url(r'^$', direct_to_template, {'template': 'song_list.html'} ), 
+    url(r'^$', direct_to_template, {'template': 'index.html'} ), 
 
     url(r'^list/$', 'djukebox.views.the_songs'),
     #url(r'^covers/$', show_covers),
@@ -21,8 +21,10 @@ urlpatterns = patterns('',
     url(r'play/$', views.increment_playcount),
     url(r'add_album/$', views.add_album),
     url(r'remove_album/$', views.remove_album),
-    url(r'block_song/$', views.block_song),
+    # Since these are checked in order, unblock_song has to come before block_song, otherwise "unblock_song" will
+    # match on "block_song"    
     url(r'unblock_song/$', views.unblock_song),
+    url(r'block_song/$', views.block_song),
 
     ###############################################################
     #  login/out/register/user profile 
