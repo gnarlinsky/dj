@@ -161,37 +161,6 @@
     <p>request: {{ request}}</p>
 {% endif %}
 </div> <!--- the_big_songs_table -->
-<center>
-
-
-
-
-
-
-
-
-<h1>!!!!!!!!!!!!!!!!!!!!!!!  THIS WAS BROUGHT IN FROM LIST.HTML, WHICH IS NOW GONE!!!!!!!   
-!!!!!!!!!!!!!!!!!!!!!!!!!!!  !!!!!!!!!!!!!!!!!!!!!!!!!!!  !!!!!!!!!!!!!!!!!!!!!!!!!!!  !!!!!!!!!!!!!!!!!!!!!!!!!!!
-</h1>
-
-    <div id='everythingSortableList'>
-           <h3>This will hold the list of all the songs, sortable on artist/song name/album name</h3>
-           (div id = 'everythingSortableList' / style.css ) 
-   {{ object_list }} 
-            <h2> old way: </h2>
-                {% for song in object_list %}
-                    <p> {{ song }} </p>
-                {% endfor %}
-
-            <h2> newer way: </h2>
-                {% for name, value in object_list.get_fields %}
-                      {{ name }} => {{ value }}
-                {% endfor %}
-
-            <p>(remember that can just call song, because you should have made __unicode__ get its thing from NAME
-            var) </p>
-    </div>
-
 
 {% endblock %}   <!-- content --> 
 

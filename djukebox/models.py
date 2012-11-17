@@ -61,10 +61,6 @@ class Song(models.Model):
     def get_artist(self):
         return self.album.artist
 
-    # Currently just for debuggage in templates......
-    def get_fields(self):
-        return [(field.name, field.value_to_string(self)) for field in Song._meta.fields]
-
     def __unicode__(self):
         return self.name
 

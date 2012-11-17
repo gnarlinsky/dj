@@ -1,0 +1,89 @@
+body,p { 
+font-size:12pt; font-family: "Georgia", serif;
+    text-shadow:none; text-align:center;  margin:0pt;
+    padding-bottom:10pt;    font-weight:normal; }   
+
+/* my div's */
+#everythingSortableList {
+/*    background: url('/static/some_picture.jpg') repeat-y scroll center top #148c99; */
+    background-color: #148c99
+    margin:0 auto;
+    padding: 5px;
+    position: relative;
+    min-height: 600px;
+    font-size: 16px;
+    font-weight: normal;
+    color: black;
+   } 
+
+#hello {
+    background-color: #148c99;
+    -mox-border-radius:17px 17px 0px 0px;
+    -webkit-border-top-left-radius:17px;
+    -webkit-border-top-right-radius:17px;
+    border-top-left-radius:17px;
+    border-top-right-radius:17px;
+    border:10px solid #148c99;
+    border:25px solid #148c99;
+    border-bottom:0px
+    margin:0 auto;
+    padding:6px;
+    position:relative;
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: "Georgia", serif;
+    text-shadow:1px 1px 1px #222222;
+    } 
+
+/* headings */
+h1 {
+    font-size:22pt; font-weight:bold; font-style:normal;
+    text-shadow:1px 1px 1px #aaa; text-align:center;     
+    padding-top:18pt; margin:0pt;    
+    }
+h2 { font-size:15pt;  text-align:center; margin:0pt; } 
+h3 {font-size:13pt;  text-align:center;margin:0pt;  padding-top:12pt;} 
+
+/* links */
+a {text-decoration: underline;  color:lightblue; text-shadow:1px 1px 1px  #222222;}
+a:hover { 
+    /* #ffff66 or #fff33; */
+    color: gold; text-shadow: 10px 10px 10px 10px black;
+        }
+
+
+
+
+/* links */
+
+
+
+
+
+
+
+/*.table */
+table { 
+    font-family: "Georgia", serif; font-size: 12px;font-weight: bold;
+    font-style: normal;    line-height: 1.4em; border-spacing:2px;}
+th.empty { 
+    background-color:white; border:white}
+th{ 
+    background-color: #148c99; -moz-border-radius:7px 7px 0px 0px;
+    -webkit-border-top-left-radius:7px;  -webkit-border-top-right-radius:7px;
+    border-top-left-radius:7px; border-top-right-radius:7px;
+    border:10px solid #148c99; border-bottom:0px;
+    color: white; text-shadow:1px 1px 1px  #222222;
+    padding-left:3px;padding-right:3px;padding-top:0px;padding-bottom:6px; }
+
+td      {  padding-left:3px; padding-right:3px; padding-bottom:2px; padding-top:2px;
+        font-weight: normal;    font-size: 12px; text-align:center;
+        background-color:#97eaf4;  -moz-border-radius:1px;  -webkit-border-radius:1px;
+        border-radius:1px; color:#000; border-top:0px }
+/* gray out songs that have been removed */
+tr.grayed_out td{ background-color:gray; color:#aaa;  }
+tr.redded_out td{
+    background-color:#b60000;
+    color:#fff;
+ }
