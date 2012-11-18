@@ -10,23 +10,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-########################################################################
-#       question/thing to look up!!!!!!!!!!!!!
-########################################################################
-# so had the following in models.py, in Song class -- but just for Song, not any other class!!!! See, already that's weird. 
-# now it's outta there.......  
-# but just general question to look up:    where to do shit like this?
-#---------------------------------------------------------------------------------------------------------
-# is the place for this here?... or in models ....? 
-# in models or views? 
-    ###### ??????????????????????????????????  I have this in views...??????
-    #    def increment_playcount(self):
-    #    #        self.playcount = self.playcount + 1
-    #
-########################################################################
 def increment_playcount(request,next= '/list/'):
-    #  see if GET request included a next key to indicate where to redirect successful logins and to set the next variable accordingly:
-    if request.GET.has_key('next'):  next = request.GET['next']
+    """ Increment the playcount of a song. Also increment the playcounts of
+        the associated album and artist. 
+    """
+    if request.GET.has_key('next'):  next = request.GET['next'] #  see if GET request included a next key to indicate where to redirect successful logins and to set the next variable accordingly:
     if "song_id" in request.GET:
         s = Song.objects.get(id=int(request.GET["song_id"]))
         ar = s.get_artist()
@@ -40,11 +28,13 @@ def increment_playcount(request,next= '/list/'):
 
 
 #############################################################################################################
-# Following four views are for the buttons on song_list. 
+# Tollowing four views are for the buttons on song_list. 
 # ... Or should I have one big remove/add/block/unblock view and just check value of request.POST["submit"]?
 #############################################################################################################
 
-@login_required()     # but... they wouldn't even see block_song if they weren't logged in.. why am I even providing a login url here...?   Is it a security thing, in case this could be faked? 
+@login_required()     # but... they wouldn't even see block_song if they weren't
+        # logged in.. why am I even providing a login url here...?   
+        # Is it a security thing, in case this could be faked? 
 def block_song(request, next='/list/'):
     if request.GET.has_key('next'):  next = request.GET['next']
     if request.method == "POST":
@@ -56,7 +46,7 @@ def block_song(request, next='/list/'):
 
 
 # GET vs POST ?
-@login_required()     # but... they wouldn't even see block_song if they weren't logged in.. why am I even providing a login url here...?   Is it a security thing, in case this could be faked? 
+@login_required()     
 def unblock_song(request, next='/list/'):
     if request.GET.has_key('next'):  next = request.GET['next']
     if request.method == "GET":
@@ -68,7 +58,6 @@ def unblock_song(request, next='/list/'):
 
 
 # GET vs POST ?
-@login_required()     # but... they wouldn't even see block_song if they weren't logged in.. why am I even providing a login url here...?   Is it a security thing, in case this could be faked? 
 @login_required()
 def remove_album(request, next='/list/'):
     if request.GET.has_key('next'):  next = request.GET['next']
@@ -92,8 +81,6 @@ def add_album(request, next='/list/'):
                 al.removed = False; 
                 al.save()
     return HttpResponseRedirect(next) 
-
-
 
 
 def the_songs(request):
@@ -127,9 +114,9 @@ def send_to_profile(request):
 
 
 
-#############################################################################################################
+##############################################################################
 # Following:login/out/registration views 
-#############################################################################################################
+##############################################################################
 
 def ownerRegistration(request):
     if request.user.is_authenticated():
@@ -145,21 +132,20 @@ def ownerRegistration(request):
                     password = form.cleaned_data['password'])
             user.save()  # save user object
 
-            ###############################################################################
-            # so setting owner = user.get_profile() -- this is what ties together the User and the Owner...right?
-            ###############################################################################
-#            owner =user.get_profile()  # remember AUTH_PROFILE_MODULE='owner.Owner' in settings.py 
-                # So can call this method against a user to get their owner object that's attached
-                # to their user. Will come in handly later on, when we do: 
+            ##################################################################
+            # so setting owner = user.get_profile() -- this is what ties 
+            # together the User and the Owner...right?
+            ##################################################################
+#            owner =user.get_profile()  # Can call this method against a user to get their owner object that's attached
+                    # remember AUTH_PROFILE_MODULE='owner.Owner' in settings.py..... 
                 
-###############  note commenting out below because some shit broke with post_blah blah (video 7).....   and adding the line below
    #         user = request.user.get_profile()   # set user attached to the owner that's logged in according to the request
    #         owner.name = form.cleaned_data['name']
    #         owner.birthday = form.cleaned_data['birthday']
             owner = Owner(user=user, name=form.cleaned_data['name'], birthday=form.cleaned_data['birthday'])
-            owner.save()     # so this is in place of automatically creating the profile...  we have to set birthday when we create the object because of the blah blah is NULL error. So this is MANUAL, keep that in mind...  nk
+            owner.save()     # so this is in place of automatically creating the profile...  we have to set birthday when we create the object ??????????????
             return HttpResponseRedirect('/profile/')  # or just HttpResponse????
-            #############  actually I just want to return a "hi, you're registered, ______." And maybe log them in already.   
+                    # to do: just return "hi, you're registered, ______"; log them in already.   
 
         else:  # form doesn't validate
             return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
@@ -179,6 +165,7 @@ def loginRequest(request):
     # unlike above, this would happen when actual button-clickage is happening
     if request.method == 'POST':  # if user is trying to log in right now
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -189,21 +176,21 @@ def loginRequest(request):
             if owner is not None:   # authentication succeeded
                 login(request, owner)
                 # returning this way below because already logged in... although this shouldn't actually happen, because 
-                #   there's no form/submit button available to someone who is already logged in (although I think this could be faked)
+                #   there's no form/submit button available to someone who is already logged in 
+                #   (although I think this could be faked)
                 #return HttpResponseRedirect('/profile/')   
                 return HttpResponseRedirect('/')  # no, not to "/"... stay .. "there" 
             else: #authentication failed
                 #return HttpResponseRedirect('/login/')
-                # why above no good?  Because you're going to go back and actually show the error, not just redirect to
-                # login
-                return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request))
+                # Commenting out above because you're going to go back and actually show the error, not just redirect to
+                return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request)) # login
+
         else:  # form not valid
             return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request))
 
     else:  # user is not submitting the form, show the login form
-            # So this wouldn't be happening through button clickage, but via url, like the first thign above, except that this time user is NOT
-            # authenticated.....
-            # yeah you might want to reorder these three things here... 
+        # So this wouldn't be happening through button clickage, but via url, like the first above
+        #   (if request.user_is_authenticated() except that this time user is NOT authenticated.....
         form = LoginForm()
         context = {'form':form}
         return render_to_response('login.html', context, context_instance=RequestContext(request))

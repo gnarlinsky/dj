@@ -26,7 +26,7 @@ class Artist(models.Model):
 
 class Album(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
+    slug = models.SlugField(unique=True)   
     artist = models.ForeignKey(Artist)
     playcount = models.IntegerField()
     removed = models.BooleanField() 
@@ -47,7 +47,7 @@ class Album(models.Model):
 ###########################################################################
 class Song(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)   # so can query object based on a URL; will give error if trying to create same slug (because unique=True)
+    slug = models.SlugField(unique=True)   
     album = models.ForeignKey(Album) 
     playcount = models.IntegerField()
     blocked = models.BooleanField() 
@@ -73,17 +73,14 @@ class Owner(models.Model):
     birthday    = models.DateField()
     name        = models.CharField(max_length=100)
 #    slug        = models.SlugField(unique=True)
-#    user_pic    = models.ImageField(upload_to='user_pics/') #nk
-                    # Django will automatically use the MEDIA root specified in settings.py here
+#    user_pic    = models.ImageField(upload_to='user_pics/') # Django will automatically use the MEDIA root specified in settings.py here
 
     def __unicode__(self):
-        return self.name    # not the user name, actually, it's provided by the user object....  wait.... what? 
+        return self.name   
 
-    ########### ???????????????????????? ####################################################################
     # create our user object to attach to our Owner object
-    #########################  not really sure what's going on here, though............... ###################
+    #################  is this even used????????????????????????  ################
     def create_owner_user_callback(sender, instance, **kwargs):
         owner, new = Owner.objects.get_or_create(user=instance) # returns True if created, False if it already exists
 
-    ########### ???????????????????????? ####################################################################
     #post_save.connect(create_owner_user_callback, User)   # when user object is created, register the post_save, and will call this function

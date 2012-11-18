@@ -60,16 +60,16 @@
 
  <p><input type='submit' name='submit' value='Register' alt='register' /></p>
 
-
-
     </form>
 
-    <p> Note how switching to 'error' class IF that's the field that the user made the error on....so the label for that
-    field will show up in red</p>
-    <p>So in the CSS, you'd
-    do something like 
-        .error { color:red; weight:bold; } </p>
-    <p> note the formatting of the label field, that "for":   label for='username'  <p>
-<p> for date crap.... jqueryui/demos/datepicker or whatever..............
-
 {% endblock %}
+
+    {% comment %}
+    Note how switching to 'error' class IF that's the field that the user made the error on....so the label for that
+    field will show up in red</p>
+    So in the CSS, you'd
+    do something like 
+        .error { color:red; weight:bold; }
+     note the formatting of the label field, that "for":   label for='username'  
+    for date crap.... jqueryui/demos/datepicker  etc. 
+    {% endcomment %}

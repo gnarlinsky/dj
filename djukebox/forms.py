@@ -18,9 +18,6 @@ class RegistrationForm(ModelForm):
     class Meta:
         model = Owner # takes a model, makes form out of the fields
         exclude = ('user',) # exclude the user field
-        #  ???????????????????????????????????  NOT SURE WHAT EXCLUDING FROM WHERE... 'user' is a field in the Owner model... but...what? so
-        #   look here:
-        #   https://www.google.com/url?url=https://docs.djangoproject.com/en/dev/topics/forms/modelforms/%23using-a-subset-of-fields-on-the-form&rct=j&q=django+forms.py+exclude+fields&usg=AFQjCNH9QIxVxQ11h8Izyb73K8_X6xha6Q&sa=X&ei=PYWlUIKKHcjgyQHlw4DACg&ved=0CDQQygQwAA
 
 class LoginForm(forms.Form):
     username    = forms.CharField(label=(u'User Name'))
@@ -47,9 +44,6 @@ class LoginForm(forms.Form):
 
         raise forms.ValidationError('That username is already taken. Please select another.') 
 
-    ############# ????????????????????????????????
-    #           So why isn't this called ....  clean_password(self), following the above?????  
-    #           Look up what a general clean() should do............
     def clean(self):
         if self.cleaned_data['password'] != self.cleaned_data['password1']:
             raise forms.ValidationError('The passwords did not match. Please try again.')
