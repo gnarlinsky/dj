@@ -3,9 +3,14 @@
 activate   # just link to activate ve
 my_helper_script.py
 nkDebugser.py
-old_youtube_vid_stuff
+old_youtube_vid_stuff_and_other
 *.swp
 todo
+db.db
+_____RUN_source_activate
+activate
+db_archives
+generate_init_data_sql_files.py
 
 # Compiled source #
 ###################
