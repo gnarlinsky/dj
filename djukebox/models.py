@@ -55,6 +55,7 @@ class Song(models.Model):
    
     # hmm, not sure if this makes sense in terms of consistency/design:
     def get_removed_status(self):
+        """ Removal is associated with Albums, not Songs """
         return self.album.removed   
    
     # Is this the best way to get artist? 
