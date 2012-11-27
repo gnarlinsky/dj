@@ -10,15 +10,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
+
+
 def increment_playcount(request,next= '/list/'):
     """ Increment the playcount of a song. Also increment the playcounts of
-        the associated album and artist. 
-    """
-    next = request.GET.get('next', 'list') 
+        the associated album and artist.  """
+    next = request.GET.get('next', '/list/') 
     # get: QueryDict method for getting value for key (first arg); second arg 
     # is a Django hook with default value in case key doesn't exist
     # next: indicate where to redirect successful logins and to set the next variable accordingly
-
     if "song_id" in request.GET:
         s = Song.objects.get(id=int(request.GET["song_id"]))
         ar = s.get_artist()
@@ -26,72 +26,59 @@ def increment_playcount(request,next= '/list/'):
         s.playcount  += 1;  s.save() # update the song's playcount
         ar.playcount += 1;  ar.save() # update the artist's playcount
         al.playcount += 1;  al.save() # update the album's playcount
-
     return HttpResponseRedirect(next) 
 
 
-#############################################################################################################
-# Following four views are for the buttons on song_list. 
-# ... Or should I have one big remove/add/block/unblock view and just check value of request.POST["submit"]?
-#############################################################################################################
-
-@login_required()     # but... they wouldn't even see block_song if they weren't
-        # logged in.. why am I even providing a login url here...?   
-        # Is it a security thing, in case this could be faked? 
-def block_song(request, next='/list/'):
-    next = request.GET.get('next', 'list') 
-    if request.method == "POST":
-        if request.POST["submit"] == "Block song":
-            if "song_id" in request.POST:
-                s = Song.objects.get(id=int(request.POST["song_id"]))
-                s.blocked = True; s.save()
-    return HttpResponseRedirect(next) 
-
-
-# GET vs POST ?
-@login_required()     
-def unblock_song(request, next='/list/'):
-    next = request.GET.get('next', 'list') 
-    if request.method == "GET":
-        if request.GET["submit"] == "Unblock song":
-            if "song_id" in request.GET:
-                s = Song.objects.get(id=int(request.GET["song_id"]))
-                s.blocked = False; s.save()
-    return HttpResponseRedirect(next) 
+@login_required()   # What the user sees *is* restricted at the template level, 
+    # but if someone knows the URL, they could still access this without being
+    # logged in. Hence the login_required decorator. 
+def song_change(request, song_id, next='/list/'): # ??  need to specify next here? 
+    """ Actions available to Owners: block/unblock songs, add/remove album
+        song_id comes from URL
+    """
+    next = request.GET.get('next', '/list')
+    s = Song.objects.get(id=song_id)   # weird, didn't complain that not int  ?
+    if request.POST:
+        if 'block_song' in request.POST:
+            block_song(s)
+        elif 'unblock_song' in request.POST:
+            unblock_song(s)
+        elif 'remove_album' in request.POST:
+            remove_album(s)
+        elif 'add_album' in request.POST:
+            add_album(s)
+        # else: 
+        #   something went wrong.........
+    return HttpResponseRedirect(next)
 
 
-# GET vs POST ?
-@login_required()
-def remove_album(request, next='/list/'):
-    next = request.GET.get('next', 'list') 
-    if request.method == 'POST':
-        if request.POST['submit'] == "Remove album":
-            if "song_id" in request.POST:
-                s = Song.objects.get(id=int(request.POST["song_id"]))
-                al = s.album
-                al.removed = True; al.save()
-    return HttpResponseRedirect(next) 
+def block_song(song_object):
+   song_object.blocked = True
+   song_object.save()
 
+def unblock_song(song_object):
+    song_object.blocked = False 
+    song_object.save()
 
-@login_required()
-def add_album(request, next='/list/'):
-    if request.GET.has_key('next'):  next = request.GET['next']
-    next = request.GET.get('next', 'list') 
-    if request.method == 'POST':
-        if request.POST['submit'] == "Add album":
-            if "song_id" in request.POST:
-                s = Song.objects.get(id=int(request.POST["song_id"]))
-                al = s.album
-                al.removed = False; 
-                al.save()
-    return HttpResponseRedirect(next) 
+def remove_album(song_object):
+    al = song_object.album
+    al.removed = True
+    al.save()
 
+def add_album(song_object):
+    al = song_object.album
+    al.removed = False; 
+    al.save()
 
 def the_songs(request):
     """ Sort column depending on which header cell's link was clicked. 
         
         (Note on playcount sort order: will come in as "-playcount," 
         so  *descending* order is taken care of.
+
+        To do: When coming back from block/unblock, etc. maintain previous 
+            sort order, i.e. don't use the default_sort_order
+
     """
     default_sort_order = "-playcount"
     sort_by = request.GET.get("sort_by", default_sort_order ) 
@@ -113,9 +100,6 @@ def send_to_profile(request):
     owner = request.user.get_profile   # will return an Owner object
     context = {'owner': owner}
     return render_to_response('profile.html', context, context_instance=RequestContext(request))
-
-
-
 
 
 ##############################################################################
