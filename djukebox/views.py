@@ -14,21 +14,24 @@ def increment_playcount(request,next= '/list/'):
     """ Increment the playcount of a song. Also increment the playcounts of
         the associated album and artist. 
     """
-    if request.GET.has_key('next'):  next = request.GET['next'] #  see if GET request included a next key to indicate where to redirect successful logins and to set the next variable accordingly:
+    next = request.GET.get('next', 'list') 
+    # get: QueryDict method for getting value for key (first arg); second arg 
+    # is a Django hook with default value in case key doesn't exist
+    # next: indicate where to redirect successful logins and to set the next variable accordingly
+
     if "song_id" in request.GET:
         s = Song.objects.get(id=int(request.GET["song_id"]))
         ar = s.get_artist()
         al = s.album
-        s.playcount = s.playcount + 1;  s.save() # update the song's playcount
-        ar.playcount = ar.playcount+1;  ar.save() # update the artist's playcount
-        al.playcount = al.playcount+1;  al.save() # update the album's playcount
+        s.playcount  += 1;  s.save() # update the song's playcount
+        ar.playcount += 1;  ar.save() # update the artist's playcount
+        al.playcount += 1;  al.save() # update the album's playcount
+
     return HttpResponseRedirect(next) 
 
 
-
-
 #############################################################################################################
-# Tollowing four views are for the buttons on song_list. 
+# Following four views are for the buttons on song_list. 
 # ... Or should I have one big remove/add/block/unblock view and just check value of request.POST["submit"]?
 #############################################################################################################
 
@@ -36,7 +39,7 @@ def increment_playcount(request,next= '/list/'):
         # logged in.. why am I even providing a login url here...?   
         # Is it a security thing, in case this could be faked? 
 def block_song(request, next='/list/'):
-    if request.GET.has_key('next'):  next = request.GET['next']
+    next = request.GET.get('next', 'list') 
     if request.method == "POST":
         if request.POST["submit"] == "Block song":
             if "song_id" in request.POST:
@@ -48,7 +51,7 @@ def block_song(request, next='/list/'):
 # GET vs POST ?
 @login_required()     
 def unblock_song(request, next='/list/'):
-    if request.GET.has_key('next'):  next = request.GET['next']
+    next = request.GET.get('next', 'list') 
     if request.method == "GET":
         if request.GET["submit"] == "Unblock song":
             if "song_id" in request.GET:
@@ -60,7 +63,7 @@ def unblock_song(request, next='/list/'):
 # GET vs POST ?
 @login_required()
 def remove_album(request, next='/list/'):
-    if request.GET.has_key('next'):  next = request.GET['next']
+    next = request.GET.get('next', 'list') 
     if request.method == 'POST':
         if request.POST['submit'] == "Remove album":
             if "song_id" in request.POST:
@@ -73,6 +76,7 @@ def remove_album(request, next='/list/'):
 @login_required()
 def add_album(request, next='/list/'):
     if request.GET.has_key('next'):  next = request.GET['next']
+    next = request.GET.get('next', 'list') 
     if request.method == 'POST':
         if request.POST['submit'] == "Add album":
             if "song_id" in request.POST:
