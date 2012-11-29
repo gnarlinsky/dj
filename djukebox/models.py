@@ -54,7 +54,7 @@ class Song(models.Model):
             # note - only individual songs may be blocked. 
    
     # hmm, not sure if this makes sense in terms of consistency/design:
-    def get_removed_status(self):
+    def is_removed(self):
         """ Removal is associated with Albums, not Songs """
         return self.album.removed   
    

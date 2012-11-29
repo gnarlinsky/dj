@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 
 
-def increment_playcount(request,next= '/list/'):
+def increment_playcount(request):
     """ Increment the playcount of a song. Also increment the playcounts of
         the associated album and artist.  """
     next = request.GET.get('next', '/list/') 
@@ -32,7 +32,7 @@ def increment_playcount(request,next= '/list/'):
 @login_required()   # What the user sees *is* restricted at the template level, 
     # but if someone knows the URL, they could still access this without being
     # logged in. Hence the login_required decorator. 
-def song_change(request, song_id, next='/list/'): # ??  need to specify next here? 
+def song_change(request, song_id): 
     """ Actions available to Owners: block/unblock songs, add/remove album
         song_id comes from URL
     """
@@ -82,12 +82,14 @@ def the_songs(request):
     """
     default_sort_order = "-playcount"
     sort_by = request.GET.get("sort_by", default_sort_order ) 
+    # get: QueryDict method for getting value for key (first arg); second arg 
+    # is a Django hook with default value in case key doesn't exist
     return list_detail.object_list( request, 
-                                queryset = Song.objects.all().order_by(sort_by),
-                                template_name= 'song_list.html',
-                                 #'template_object_name'= 'Song',
-                                 #  'extra_context'= {'song_list': Song.objects.all}
-                                 )
+                            queryset = Song.objects.all().order_by(sort_by),
+                            template_name= 'song_list.html',
+                             #'template_object_name'= 'Song',
+                             # 'extra_context'= {'song_list': Song.objects.all}
+                             )
 
 
 # if not logged in, send to login page that's defined in settings,
@@ -145,10 +147,11 @@ def ownerRegistration(request):
 
 
 def loginRequest(request):
+    """ to do: after logging in, don't go to '/' or etc. See stupid HTTP_REFERER thing in logout view """
     # when this is called via url, not through trying to submit the form (right?)
     if request.user.is_authenticated():
      #   return HttpResponseRedirect('/profile/') # so can't login twice
-        return HttpResponseRedirect('/')   # don't go anywhere new.....   How do you just ... stay there?
+        return HttpResponseRedirect('/')   # don't go anywhere else....?
 
     # unlike above, this would happen when actual button-clickage is happening
     if request.method == 'POST':  # if user is trying to log in right now
@@ -159,8 +162,9 @@ def loginRequest(request):
             password = form.cleaned_data['password']
 
             # when you log someone in:  (1) call authenticate, then (2) call login
-            owner = authenticate(username =username, password=password)   # return a user object if 
-                            #password is valid, otherwise returns null
+            # return a user object if password is valid, otherwise returns null
+            owner = authenticate(username =username, password=password)   
+
             if owner is not None:   # authentication succeeded
                 login(request, owner)
                 # returning this way below because already logged in... although this shouldn't actually happen, because 
@@ -186,4 +190,8 @@ def loginRequest(request):
 
 def logoutRequest(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    # remain where you were, so get HTTP_REFERER.  
+    # Haven't looked up the right way to do this yet; also not checking if it exists, etc. 
+    stay_there = request.META['HTTP_REFERER']  
+#    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(stay_there)

@@ -5,8 +5,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
-
     # If just want a simple page, don't need to access db, etc:
     # so don't need to write your own view; this will just call song_list.html
     url(r'^$', direct_to_template, {'template': 'index.html'} ), 
@@ -19,12 +17,14 @@ urlpatterns = patterns('',
     # djukebox controls 
     ###############################################################
     url(r'play/$', views.increment_playcount),
-    url(r'add_album/$', views.add_album),
-    url(r'remove_album/$', views.remove_album),
-    # Since these are checked in order, unblock_song has to come before block_song, otherwise "unblock_song" will
-    # match on "block_song"    
-    url(r'unblock_song/$', views.unblock_song),
-    url(r'block_song/$', views.block_song),
+    #url(r'song_change/(?P<song_id>)/$', 'djukebox.views.song_change'),  
+    url(r'song_change/(\d+)/$', 'djukebox.views.song_change'),
+    # following four views phased out in favor of above 
+    #url(r'add_album/$', views.add_album),
+    #url(r'remove_album/$', views.remove_album),
+    #url(r'unblock_song/$', views.unblock_song), # Since these are checked in 
+        # order, unblock_song has to come before block_song, otherwise "unblock_song" will  match on "block_song"    
+    #url(r'block_song/$', views.block_song),
 
     ###############################################################
     #  login/out/register/user profile 
