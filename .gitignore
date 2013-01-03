@@ -8,7 +8,7 @@ _____RUN_source_activate
 activate
 generate_init_data_sql_files.py
 ss
-.idea  # PyCharm
+.idea/  # PyCharm
 .note.*   # e.g. .note.views.py
 archives
 
