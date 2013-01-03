@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="afbae4d6-2290-484b-b49d-13119bf8ba12" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="dj.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,7 +26,7 @@
       <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="24" selection-start="202" selection-end="202" vertical-scroll-proportion="0.31914893">
+            <state line="10" column="7" selection-start="167" selection-end="167" vertical-scroll-proportion="0.28368795">
               <folding />
             </state>
           </provider>
@@ -621,7 +622,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="24" selection-start="202" selection-end="202" vertical-scroll-proportion="0.31914893">
+        <state line="10" column="7" selection-start="167" selection-end="167" vertical-scroll-proportion="0.28368795">
           <folding />
         </state>
       </provider>
