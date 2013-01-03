@@ -1,15 +1,5 @@
 {% extends "base.html" %}
 
-<!--  placeholder for current/just played song
-{% block just_played %} 
-   {% if song.name %}  
-       <h3> Just played/selected: </h3>
-        {{song.name}}<br> {{song.get_artist}}<br>{{song.album}}
-    {% endif %}
-
-{% endblock %}  
--->
-
 <!--
 {% block search_jukebox %}
     <h3>Search for song, artist, or album:</h3>
@@ -29,6 +19,16 @@
         <div class='highlight' id='gray_highlight'>Removed songs/albums are grayed out.</div> 
         <div class='highlight' id='red_highlight'>Blocked songs are in red.</div>
     {% endif %}
+ 
+    {% comment %} display song just played, if just played one {% endcomment %} 
+    {% if just_played %}
+    <div id="just_played" class="curvy_border">
+        <h3>djust played:</h3> 
+        <p>{{ just_played.name}} by {{just_played.get_artist}} ({{just_played.album}})</p>
+    </div>
+    {% endif %}
+
+
 
 <div id="the_big_songs_table">
 {% if object_list %}
@@ -42,9 +42,10 @@
             <th style="width:100px;">Artist</th>
            <!-- <th><a href="?sort_by=artist">Artist</a></th>   -->
             <th width=10px><a href="?sort_by=-playcount">Song play count</a></th>
+            <th width=20px>Tags<br>(everybody's)</th>
             {% if user.is_authenticated %}
-                <th width=10px>Remove from/ Add to jukebox  </th>
-                <th width=10px>Block/ Unblock song </th>
+                <th width=20px>Tags<br>(djust {{user.username}}'s )</th>
+                <th width=10px>Remove from/ Add to djukebox<br>or<br>Block/ Unblock song </th>
             {% endif %}
         </tr></thead>  
 
@@ -71,30 +72,33 @@
                         <td>{{ song.album}}</td>
                         <td>{{ song.get_artist }}</td>
                         <td>{{ song.playcount }}</td>
+                        <td width="20px">insert tags - song.tags or get_tags or ....</td>
                 {% endif %}
    
-                       {% comment %}
-                           If song('s album) is removed, NO 'unblock song', NO 'block song' button, no matter what the song's status actually is. 
-                            If song('s album) is NOT removed, then have 'Add album' button. 
-                                But if it's ALSO blocked, have 'Unblock song' button.
-                                Otherwise, 'block song' button
-                       {% endcomment %}
                        {% if user.is_authenticated %} 
-                        <form action="song_change/{{song.id}}/" method="post">
+{% comment %}
+    If song('s album) is removed, NO 'unblock song', NO 'block song' button, no matter what the song's status actually is. 
+    If song('s album) is NOT removed, then have 'Add album' button. 
+    But if it's ALSO blocked, have 'Unblock song' button.
+    Otherwise, 'block song' button
+{% endcomment %}
+                    <td width="20px">insert user tags</td>
+                    <td>
+                        <form action="/song_change/{{song.id}}/" method="post">
                             {% csrf_token %} 
                             {% if song.is_removed %}  
-                                <td> <input type="submit" name="add_album"  value="Add album"> </td>
-                                <td></td>
+                                 <input type="submit" name="add_album"  value="Add album"> 
                             {% else %}   {%comment%}  song/album is NOT removed {%endcomment%}
-                                <td> <input type="submit" name="remove_album"  value="Remove album"> </td>
+                                 <input type="submit" name="remove_album"  value="Remove album"> 
                                 {% if song.blocked %}  
-                                    <td> <input type="submit" name="unblock_song"  value="Unblock song"> </td>
+                                    <input type="submit" name="unblock_song"  value="Unblock song">
                                 {% else  %}  {%comment%} song is NOT blocked {%endcomment %}
-                                    <td> <input type="submit" name="block_song"  value="Block song"> </td>
+                                    <input type="submit" name="block_song"  value="Block song">
                                 {% endif %}
                             {% endif %}
                             {% endif %}
                         </form>
+                      </td>
                    </tr>
 
     {% endfor %}

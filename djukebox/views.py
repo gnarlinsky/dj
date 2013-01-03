@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from django import forms
 from djukebox.models import Song, Album, Artist, Owner
-from django.template import Context, RequestContext
+from django.template import Context, RequestContext, Template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import  render_to_response
 from djukebox.forms import RegistrationForm, LoginForm
@@ -15,10 +15,10 @@ from django.contrib.auth.models import User
 def increment_playcount(request):
     """ Increment the playcount of a song. Also increment the playcounts of
         the associated album and artist.  """
-    next = request.GET.get('next', '/list/') 
     # get: QueryDict method for getting value for key (first arg); second arg 
     # is a Django hook with default value in case key doesn't exist
     # next: indicate where to redirect successful logins and to set the next variable accordingly
+    s = ""
     if "song_id" in request.GET:
         s = Song.objects.get(id=int(request.GET["song_id"]))
         ar = s.get_artist()
@@ -26,7 +26,19 @@ def increment_playcount(request):
         s.playcount  += 1;  s.save() # update the song's playcount
         ar.playcount += 1;  ar.save() # update the artist's playcount
         al.playcount += 1;  al.save() # update the album's playcount
-    return HttpResponseRedirect(next) 
+
+    #next = request.GET.get('next', '/list/') 
+    #return HttpResponseRedirect(next) 
+
+    # extra context here until playing a song is an actual action
+    sort_by = request.GET.get("sort_by", "-playcount" ) 
+    return list_detail.object_list( request, 
+                            queryset = Song.objects.all().order_by(sort_by),
+                            template_name= 'song_list.html',
+                             #'template_object_name'= 'Song',
+                             extra_context = {'just_played':s},
+                             #'extra_context'= {'song_list': song.objects.all}
+                             )
 
 
 @login_required()   # What the user sees *is* restricted at the template level, 
@@ -88,9 +100,15 @@ def the_songs(request):
                             queryset = Song.objects.all().order_by(sort_by),
                             template_name= 'song_list.html',
                              #'template_object_name'= 'Song',
-                             # 'extra_context'= {'song_list': Song.objects.all}
+                             #'extra_context'= {'song_list': song.objects.all}
                              )
 
+def find_similar_songs_by_tag(request):
+    """ User selects song and/or tags; djukebox returns songs with semantically similar tags """
+    return HttpResponse()
+
+#def covers(request):
+    """ Cover flow """
 
 # if not logged in, send to login page that's defined in settings,
 # then bring them back
@@ -148,10 +166,17 @@ def ownerRegistration(request):
 
 def loginRequest(request):
     """ to do: after logging in, don't go to '/' or etc. See stupid HTTP_REFERER thing in logout view """
+    # http_referer stuff.. not in here! because it may be /login/, actually,
+    # so results in the too-many-redirects error
+#    if 'HTTP_REFERER' in request.META:
+#        stay_there = request.META['HTTP_REFERER']  
+#    else:
+#        stay_there = '/'  # which is not actually "staying there"
     # when this is called via url, not through trying to submit the form (right?)
     if request.user.is_authenticated():
      #   return HttpResponseRedirect('/profile/') # so can't login twice
         return HttpResponseRedirect('/')   # don't go anywhere else....?
+     #   return HttpResponseRedirect(stay_there)   # don't go anywhere else....?
 
     # unlike above, this would happen when actual button-clickage is happening
     if request.method == 'POST':  # if user is trying to log in right now
@@ -192,6 +217,9 @@ def logoutRequest(request):
     logout(request)
     # remain where you were, so get HTTP_REFERER.  
     # Haven't looked up the right way to do this yet; also not checking if it exists, etc. 
-    stay_there = request.META['HTTP_REFERER']  
+    if 'HTTP_REFERER' in request.META:
+        stay_there = request.META['HTTP_REFERER']  
+    else:
+        stay_there = '/'  # which is not actually "staying there"
 #    return HttpResponseRedirect('/')
     return HttpResponseRedirect(stay_there)

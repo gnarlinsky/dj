@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'index.html'} ), 
 
     url(r'^list/$', 'djukebox.views.the_songs'),
+    url(r'^simtags/$', 'djukebox.views.find_similar_songs_by_tag'),
     #url(r'^covers/$', show_covers),
     #url(r'/(?P<song_slug>.*)/$', Song),  
 

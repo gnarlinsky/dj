@@ -2,7 +2,7 @@
 <head>
     <link rel='stylesheet' type='text/css' href='/static/style.css' /> 
 <head>
-
+<link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico" />
 <body>
 
 <div id="outer_div" class="curvy_border">
@@ -20,6 +20,7 @@
     <div id="some_other_top_bar_thing" class="curvy_border"> 
         <p> <a href='/list/'>List of all songs</a></p>
         <p><a href='/covers/'>Covers flow thing</a> </p>
+        <p><a href='/simtags/'>Find similar songs</a> </p>
     </div>
 
     <div id="specifically_login_out_top_hello" class="curvy_border">
@@ -36,7 +37,7 @@
     </div>
 </div> <!-- header --> 
 
-    <div id="pagecontainer" class="curvy_border">
+    <div id="pagecontainer" class="curvy_border" >
         {% block content %} {% endblock %}
     </div>
 
