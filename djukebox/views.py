@@ -3,7 +3,7 @@ from django import forms
 from djukebox.models import Song, Album, Artist, Owner
 from django.template import Context, RequestContext, Template
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import  render_to_response
+from django.shortcuts import  redirect,render_to_response
 from djukebox.forms import RegistrationForm, LoginForm
 from django.views.generic import list_detail
 from django.contrib.auth import authenticate, login, logout
@@ -135,9 +135,10 @@ def ownerRegistration(request):
 
         if form.is_valid():   # remember our custom validation in forms.py! [update: well... not anymore] 
             # so at this point we know everything in the form is good
-            user = User.objects.create_user(username = form.cleaned_data['username'], \
-                    email = form.cleaned_data['email'], \
-                    password = form.cleaned_data['password'])
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = User.objects.create_user(username =username,email = email, password = password)
             user.save()  # save user object
 
             ##################################################################
@@ -146,18 +147,24 @@ def ownerRegistration(request):
             ##################################################################
 #            owner =user.get_profile()  # Can call this method against a user to get their owner object that's attached
                     # remember AUTH_PROFILE_MODULE='owner.Owner' in settings.py..... 
-                
-   #         user = request.user.get_profile()   # set user attached to the owner that's logged in according to the request
-   #         owner.name = form.cleaned_data['name']
-   #         owner.birthday = form.cleaned_data['birthday']
+
             owner = Owner(user=user, name=form.cleaned_data['name'], birthday=form.cleaned_data['birthday'])
             owner.save()     # so this is in place of automatically creating the profile...  we have to set birthday when we create the object ??????????????
-            return HttpResponseRedirect('/profile/')  # or just HttpResponse????
-                    # to do: just return "hi, you're registered, ______"; log them in already.   
-
+            #########################################################################
+            # after sucessfully registering, get logged in --  and go back, or home
+            #########################################################################
+            this_owner = authenticate(username =username, password=password)
+            login(request, this_owner)    # Is this okay?   Secure??????
+            go_back = request.path_info.rsplit("/",2)[0]  # get everything but last element of the URL + trailing "/",
+            #####################################################################
+            # TO DO -- that trailing slash may not be there!!!  Do this smarter.
+            #####################################################################
+            if not go_back:
+                go_back = "/" # go home, or you just came from home  (so this is in case there's no initial forward slash)
+            return redirect(go_back)
+            #return HttpResponseRedirect('/profile/')
         else:  # form doesn't validate
             return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
-
     else: # user is not trying to submit the form, show them a blank registration form
         form = RegistrationForm()
         context = {'form':form}
@@ -165,18 +172,10 @@ def ownerRegistration(request):
 
 
 def loginRequest(request):
-    """ to do: after logging in, don't go to '/' or etc. See stupid HTTP_REFERER thing in logout view """
-    # http_referer stuff.. not in here! because it may be /login/, actually,
-    # so results in the too-many-redirects error
-#    if 'HTTP_REFERER' in request.META:
-#        stay_there = request.META['HTTP_REFERER']  
-#    else:
-#        stay_there = '/'  # which is not actually "staying there"
     # when this is called via url, not through trying to submit the form (right?)
     if request.user.is_authenticated():
-     #   return HttpResponseRedirect('/profile/') # so can't login twice
-        return HttpResponseRedirect('/')   # don't go anywhere else....?
-     #   return HttpResponseRedirect(stay_there)   # don't go anywhere else....?
+        return HttpResponseRedirect('/profile/') # so can't login twice (although I think registration form will
+     # complain about duplicate entries)
 
     # unlike above, this would happen when actual button-clickage is happening
     if request.method == 'POST':  # if user is trying to log in right now
@@ -195,8 +194,22 @@ def loginRequest(request):
                 # returning this way below because already logged in... although this shouldn't actually happen, because 
                 #   there's no form/submit button available to someone who is already logged in 
                 #   (although I think this could be faked)
-                #return HttpResponseRedirect('/profile/')   
-                return HttpResponseRedirect('/')  # no, not to "/"... stay .. "there" 
+                #return HttpResponseRedirect('/profile/')
+
+                #############################################################################
+                # after logging in, go back to where you came from, or to "/"
+                #############################################################################
+                go_back = request.path_info.rsplit("/",2)[0]  # get everything but last element of the URL + trailing "/",
+                #####################################################################
+                # TO DO -- that trailing slash may not be there!!!  Do this smarter.
+                #####################################################################
+                if not go_back:
+                    go_back = "/" # go home, or you just came from home  (so this is in case there's no initial forward slash)
+                return redirect(go_back)
+
+
+
+                #return HttpResponseRedirect('/')  # no, not to "/"... stay .. "there"
             else: #authentication failed
                 #return HttpResponseRedirect('/login/')
                 # Commenting out above because you're going to go back and actually show the error, not just redirect to
@@ -215,11 +228,23 @@ def loginRequest(request):
 
 def logoutRequest(request):
     logout(request)
-    # remain where you were, so get HTTP_REFERER.  
-    # Haven't looked up the right way to do this yet; also not checking if it exists, etc. 
-    if 'HTTP_REFERER' in request.META:
-        stay_there = request.META['HTTP_REFERER']  
-    else:
-        stay_there = '/'  # which is not actually "staying there"
-#    return HttpResponseRedirect('/')
-    return HttpResponseRedirect(stay_there)
+
+    #####################################################################
+    # after logging in/out/registering, go back to where you came from.
+    #####################################################################
+    # Since the login, logout (and other associated) URLs look like this:
+    # urls.py:
+    #    url(r'^login/$',views.loginRequest),
+    # templates:
+    #    e.g. href='login/'   (not href='/login/')
+    # settings.py:
+    #     LOGIN_URL = 'login/'  (vs LOGIN_URL = '/login/')
+    # (i.e. to login, the URL just sticks on "login" to the existing URL),
+    # we know the path we just came from is this one minus the last element:
+    go_back = request.path_info.rsplit("/",2)[0]  # get everything but last element of the URL + trailing "/",
+    #####################################################################
+    # TO DO -- that trailing slash may not be there!!!  Do this smarter.
+    #####################################################################
+    if not go_back:
+        go_back = "/" # go home, or you just came from home  (so this is in case there's no initial forward slash)
+    return redirect(go_back)

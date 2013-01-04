@@ -5,6 +5,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    ############ test ##############
+
     # If just want a simple page, don't need to access db, etc:
     # so don't need to write your own view; this will just call song_list.html
     url(r'^$', direct_to_template, {'template': 'index.html'} ), 
@@ -30,11 +32,12 @@ urlpatterns = patterns('',
     ###############################################################
     #  login/out/register/user profile 
     ###############################################################
-    url(r'^login/$',views.loginRequest), 
-    url(r'^logout/$', views.logoutRequest),
+    url(r'login/$',views.loginRequest),
+    url(r'logout/$', views.logoutRequest),
     #url(r'^logout/$', 'django.contrib.auth.views.logout', { 'next_page': '/list/'}   ),  
-    url(r'^register/$', views.ownerRegistration),  
-    url(r'^profile/$', views.send_to_profile),
+    url(r'register/$', views.ownerRegistration),
+    url(r'profile/$', views.send_to_profile),
+    # note - changed all these from r'^login/$', etc.
 
     ###############################################################
     #  password resetting 

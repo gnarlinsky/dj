@@ -29,10 +29,10 @@
             Otherwise, the parent template (base.html) will fill it in with just the link to /login/.  {% endcomment %}
 
         {% if user.is_authenticated %} 
-               <p><a href="/logout/">Logout</a></p> 
+               <p><a href="logout/">Logout</a></p>
         {% else %} 
-             <p>{% block login %}<a href="/login/">Login</a>{% endblock %}</p> 
-             <p><a href="/register/">Register</a></p>
+             <p>{% block login %}<a href="login/">Login</a>{% endblock %}</p>
+             <p><a href="register/">Register</a></p>
         {% endif %}
     </div>
 </div> <!-- header --> 

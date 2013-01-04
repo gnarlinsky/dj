@@ -122,10 +122,13 @@ TEMPLATE_DIRS = (
 AUTH_PROFILE_MODULE = 'djukebox.Owner'
 
 # URL for @login_required decorator to use
-LOGIN_URL = '/login/'   # so any time you put the login_required decorator on a view, it'l go to /login/
+#LOGIN_URL = '/login/'   # so any time you put the login_required decorator on a view, it'l go to /login/
+LOGIN_URL = 'login/'   # so any time you put the login_required decorator on a view, it'l go to login/
 
 # URL for redirecting authenticated users
-LOGIN_REDIRECT_URL = '/profile/'  
+#LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_REDIRECT_URL = 'profile/'
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',   # for user authentication

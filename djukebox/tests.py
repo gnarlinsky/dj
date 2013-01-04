@@ -14,3 +14,8 @@ class SimpleTest(TestCase):
         Tests that 1 + 1 always equals 2.
         """
         self.assertEqual(1 + 1, 2)
+
+
+# TO DO (random things, not comprehensive!):
+#   - check that upon logging out/in/after registering, etc., end up at same place where initiated that action
+#   - successful registration - get logged in automatically
