@@ -36,8 +36,8 @@ urlpatterns = patterns('',
     url(r'logout/$', views.logoutRequest),
     #url(r'^logout/$', 'django.contrib.auth.views.logout', { 'next_page': '/list/'}   ),  
     url(r'register/$', views.ownerRegistration),
-    url(r'profile/$', views.send_to_profile),
-    # note - changed all these from r'^login/$', etc.
+    # note - changed the above  from r'^login/$', etc.
+    url(r'/profile/$', views.send_to_profile),
 
     ###############################################################
     #  password resetting 

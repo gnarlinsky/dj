@@ -156,6 +156,13 @@ a:hover {
     border:2px solid black;
 }
 
+/* definition list */
+dl {
+    font-size:12px; 
+}
+dt { font-weight:bold;}
+dd { font-weight:normal;}
+
 /* headings */
 h1 {
     font-size:22pt; font-weight:bold; font-style:normal;

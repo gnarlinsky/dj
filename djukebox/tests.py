@@ -19,3 +19,4 @@ class SimpleTest(TestCase):
 # TO DO (random things, not comprehensive!):
 #   - check that upon logging out/in/after registering, etc., end up at same place where initiated that action
 #   - successful registration - get logged in automatically
+#   - note how now have login/ instead of /login/... but still have /profile/.  check that this stuff did not break.

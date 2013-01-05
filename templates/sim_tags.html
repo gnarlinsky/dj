@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Determining semantically similar tags/songs</h2>
+<p>
+<dl>
+    <dt>Select any number of tags.</dt> <dd>System will determine which other tags (and corresponding songs) in the djukebox are semantically similar.</dd>
+    <dt></dt><dd>or</dd>
+    <dt>(not implemented) Select a *song*.</dt> <dd>System will determine which other songs are similar (by comparing your song's tags with other songs' tags).</dd>
+</dl>
+
+<div style="margin-top:20px;">
+
+<table>
+
+<!-- display tags to choose from -->
+<tr><td style="background-color:white;"> <!--  yes! putting two things side by side by using a TABLE, omg, the horror. -->
+    <h3>Choose:</h3>
+    <form action='/simtags/' method='post'>
+        {% csrf_token%}
+        <select size=20 name='tagSelectionField' multiple='yes'>"
+        {% comment %} ".items" is a Django keyword that splits a dictionary into a list of (key, value) pairs.  {% endcomment %}
+            {% for song,tag in tags_songs.items %}
+                <option value='{{ tag }}'>{{tag}} ({{song}})</option>
+            {% endfor %}
+        </select> <br>
+        <input type='submit' name='submit_tags' value='Find songs with similar tags'>
+    </form>
+</td>
+
+<!-- display chosen tags/songs -->
+<td style="background-color:white;width:50%;">
+    <h3>Chosen:</h3>
+    {% for chosen_tag in chosen_tags %}
+        <p>{{ chosen_tag }} </p>
+    {% endfor %}
+    {% comment %}[Can only get the tag with this dumb technique... it's time to edit models! {% endcomment %}
+</td></tr>
+</table>
+
+{% endblock %}

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from django import forms
 from djukebox.models import Song, Album, Artist, Owner
 from django.template import Context, RequestContext, Template
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,8 +8,8 @@ from django.views.generic import list_detail
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
-
+import time    # for timer
+import urllib
 
 def increment_playcount(request):
     """ Increment the playcount of a song. Also increment the playcounts of
@@ -39,7 +38,6 @@ def increment_playcount(request):
                              extra_context = {'just_played':s},
                              #'extra_context'= {'song_list': song.objects.all}
                              )
-
 
 @login_required()   # What the user sees *is* restricted at the template level, 
     # but if someone knows the URL, they could still access this without being
@@ -105,18 +103,86 @@ def the_songs(request):
 
 def find_similar_songs_by_tag(request):
     """ User selects song and/or tags; djukebox returns songs with semantically similar tags """
-    return HttpResponse()
+
+
+    # hardcoding some tags in for now, while testing this.......
+    # similarities among tags below:
+    #  types: punk/classical
+    #  my own: eargasm/ugh 
+    #  sleep/chill
+    #  sad/depressing/melancholy    .... so tag 'sad' is more similar to 'melancholy' than to 'depressing,' I guess. 
+    #  happy/energizing
+    #  opposites: chill, energizing
+
+    tags_songs = { 
+        "song1name":"punk",\
+        "song2name":"classical", \
+        "song3name":"ugh", \
+        "song4name":"eargasm",\
+        "song5name":"sleep",\
+        "song6name":"chill",\
+        "song7name":"depressing",\
+        "song8name":"sad",\
+        "song9name":"melancholy",\
+        "song10name":"happy",\
+        "song11name":"energizing",\
+        "a": "inspiring",\
+        "b": "joyful",\
+        "c": "soothing",\
+        "d": "dark",\
+        "e": "moody",\
+        "f": "boring",\
+        "g": "acoustic",\
+        "h": "discordant",\
+        "i": "up-tempo",\
+        "j": "indie",\
+        "k": "alternative",\
+        }
+
+
+    # commenting out below for now, just want the above to show up on the page
+    """
+    with Timer():
+        res = {}
+        for tag_word1 in tags_songs.values():
+            for tag_word2 in tags_songs.values():
+                # if tags are not same and this pair has not been compared already
+                if (tag_word1 != tag_word2) and ((tag_word1,tag_word2) not in tags_songs.keys()):
+                    print "........ comparing %s and %s: " % (tag_word1, tag_word2)
+                    # store results in res dict, where keys are word1,word2(in alpha order) tuple pairs and vals are scores
+                    # (so this is pretty terrible, overwriting prev vals, etc. )
+
+                    t = tuple(sorted([tag_word1,tag_word2]))
+                    #print "here's t and its type: ",t,"-----------", type(t)
+                    if t not in res.keys():
+                        # commenting out hso -hso does not give results as good as vector_pairs!
+                        #measure = measure_from_web_interface(tag_word1,tag_word2,"hso")  
+                        measure = measure_from_web_interface(tag_word1,tag_word2,"vector_pairs")
+                        if measure:
+                            res[t] = measure
+                print "-------------- end for loop in main ---------------------------------------------------------"
+
+        # sort on score
+        l = sorted( (float(res[key]),key) for key in res.keys())
+
+        return HttpResponse(l)
+        """
+
+    # get chosen tags and pass them along
+    chosen_tags = None
+    if request.POST:
+        if 'tagSelectionField' in request.POST:
+            chosen_tags = request.POST.getlist('tagSelectionField')  # do getlist - otherwise you'll only get the first val...
+    return render_to_response('sim_tags.html', {'tags_songs': tags_songs, 'chosen_tags':chosen_tags}, context_instance=RequestContext(request))
 
 #def covers(request):
     """ Cover flow """
 
 # if not logged in, send to login page that's defined in settings,
-# then bring them back
-############  Wait, no, that doesn't work for me right here.......  I'm seeing this http://localhost:8080/login/?next=/profile/, but after submit it does NOT go to profile... but it HAS registered them. 
 @login_required
 def send_to_profile(request):
     if not request.user.is_authenticated():  # if not logged in... not required, sort of a safety net thing (right?)
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect('login/')
     owner = request.user.get_profile   # will return an Owner object
     context = {'owner': owner}
     return render_to_response('profile.html', context, context_instance=RequestContext(request))
@@ -191,10 +257,6 @@ def loginRequest(request):
 
             if owner is not None:   # authentication succeeded
                 login(request, owner)
-                # returning this way below because already logged in... although this shouldn't actually happen, because 
-                #   there's no form/submit button available to someone who is already logged in 
-                #   (although I think this could be faked)
-                #return HttpResponseRedirect('/profile/')
 
                 #############################################################################
                 # after logging in, go back to where you came from, or to "/"
@@ -248,3 +310,102 @@ def logoutRequest(request):
     if not go_back:
         go_back = "/" # go home, or you just came from home  (so this is in case there's no initial forward slash)
     return redirect(go_back)
+
+
+
+
+#####################################################################
+#####################################################################
+# testing finding similar songs by comparing tags semantically
+#####################################################################
+#####################################################################
+
+"""  Go with vector_pairs.   
+Getting rid of a bunch of stuff in here; old crap is in archive1.sem_sim_test.py
+(comparisons at end of file of archive1.sem_sim_test.py)
+
+http://search.cpan.org/dist/WordNet-Similarity/doc/intro.pod. 
+Web interface takes forever.......   52 minutes at one point for hso. only 5 min for vector_pairs, though, but that's still way too long
+
+so ************************** use wordnet_sim_sample.pl ****************************
+""" 
+
+
+class Timer():
+    def __enter__(self): self.start = time.time()
+    def __exit__(self, *args): 
+        sec  = time.time()-self.start
+        mins  = sec/60.0
+        print "(Timer) That took: %f min (%f sec)" % (mins,sec)
+
+
+def measure_from_web_interface(word1, word2,method):
+    """ Returns hso or vector pairs (Gloss Vector (pairwise))  similarity/relatedness of two words
+        The ted pedersen himself said: ' There is also a web interface you could access - you could presumably write a python client to query the web interface to get the lesk or vector values.  You can find those web interfaces here...
+http://marimba.d.umn.edu http://talisker.d.umn.edu'
+
+    'This measure (hso) works by finding lexical chains linking the two word senses. There are three classes of relations that are considered: extra-strong, strong, and medium-strong. The maximum relatedness score is 16.'
+
+    method =  currently, specify 'hso' or 'vector_pairs'
+    """
+
+    # method must be a specific thing, check for it..........
+    
+    # build the url 
+    # method is 'hso' or 'vector_pairs'
+    if method=='hso':  root_node_option='&rootnode=yes'
+    elif method=='vector_pairs': root_node_option=''
+    url =  "http://talisker.d.umn.edu/cgi-bin/similarity/similarity.cgi?word1=%s&senses1=all&word2=%s&senses2=all&measure=%s%s" % (word1,word2,method,root_node_option)
+        
+    #
+    # tried this assuming that every tag is an adjective for now (%23a)
+    #         #   note that I picked hso from results that did NOT specify pos (see the stuff above comparing happy, sad, etc. )
+    #             url =
+    #             "http://talisker.d.umn.edu/cgi-bin/similarity/similarity.cgi?word1="+word1+"%23a&senses1=all&word2="+word2+"%23a&senses2=all&measure=hso"
+    # but.........  that made things worse. 
+
+    #print url,"\n"
+    # retrieve the html
+    print "...............................  urlopening ...................."
+    with Timer():
+        h = urllib.urlopen(url)
+    print " DONE...............................  urlopening ...................."
+    res_html = h.read()
+    h.close()
+
+
+    ######################  ugh. so. slow.  (52 minutes for only about 20 tags!!!!)
+    # how long did vector_pairs take?  ______________ (same number of tags)   (but later in the day....  maybe their server load is better right now)
+    #  or you could just freaking use the perl module and call it from python. it's not that scary. 
+    #  yeah, time to recall perl. 
+    #########  so note - see gray sticky -- downloading crap right now for that. ################
+
+    ######## to do #########
+    # So this is taking FOREVER. 
+    #     How about:  don't just get html every time, SAVE *RESULT* TO DISK.
+    #     So check if you already have an hso value for the tag pair. if don't have the results for that one, THEN go out to the web. 
+    #     Hey, guess what. nice way to implement memoization, @cached, etc. but first, the ez way: 
+    # if (tag1_word,tag2_word) not in result_cache:
+    #   same as above, except before returning put the val in the result_cache
+    #   return same as above
+    # else:
+    #   return result_cache[(tag1_word,tag2_word)]
+    #   # but actually the @cache thing should be decorating this def, so in main, right?
+    #   
+
+
+    # Just look in the html and find the hso score, which is follows search_str and is followed by a period. 
+    search_str = "</a> using %s is " % method
+    pos = res_html.find(search_str)
+    remainder = res_html[pos:]
+
+    end_pos = remainder.find(".</p>")# look just in remainder of html for the period, which follows the number
+    print "\tpos,end_pos:\t\t", pos, end_pos, 
+    if (pos != -1) and (end_pos != -1):
+        meas=remainder[len(search_str):end_pos] # should pick out the hso number
+    else:
+        meas = -1
+    print "\t%s: \t\t:%s " % (method,meas)
+    return meas
+
+

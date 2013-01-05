@@ -32,7 +32,7 @@
 
 <div id="the_big_songs_table">
 {% if object_list %}
-    <!-- the actual table of all songs, constructed for Owners or Listeners -->
+    <!-- the actual table of all songs, constructed for Owners or Listeners (=Anonymous users) -->
     <table>
         <thead><tr>
 <!--            <th width=10px><a href="?sort_by=id">(temp) id</a></th> -->
@@ -44,7 +44,7 @@
             <th width=10px><a href="?sort_by=-playcount">Song play count</a></th>
             <th width=20px>Tags<br>(everybody's)</th>
             {% if user.is_authenticated %}
-                <th width=20px>Tags<br>(djust {{user.username}}'s )</th>
+                <th width=20px>Tags<br>(djust {{user.username}}'s/yours)</th>
                 <th width=10px>Remove from/ Add to djukebox<br>or<br>Block/ Unblock song </th>
             {% endif %}
         </tr></thead>  
@@ -101,6 +101,30 @@
                       </td>
                    </tr>
 
+
+  {% comment %}  TO DO: improve the above logic with the following in views and css:
+ def get_classes(self):
+	if song.is_removed:
+        song_class = “song_removed”
+    else:
+	    song_class = “song_not_removed”
+
+    if song.album.is_removed:
+	    album_class = “album_removed”
+    else:
+	    album_class = “album_not_removed”
+
+    return “%s %s” % (song_class, album_class)
+
+	# in css:
+
+	element.song_removed.album_removed {...}
+	element.song_removed.album_not_removed {...}
+	element.song_not_removed.album_removed {...}
+
+  {% endcomment %}
+
+
     {% endfor %}
     </tbody>
     </table>
@@ -113,6 +137,6 @@
 {% endif %}
 </div> <!--- the_big_songs_table -->
 
-{% endblock %}   <!-- content --> 
+{% endblock %}   <!-- content -->
 
 
