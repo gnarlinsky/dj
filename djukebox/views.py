@@ -223,8 +223,6 @@ def ownerRegistration(request):
             login(request, this_owner)    # Is this okay?   Secure??????
             go_back = request.path_info.rsplit("/",2)[0]  # get everything but last element of the URL + trailing "/",
             #####################################################################
-            # TO DO -- that trailing slash may not be there!!!  Do this smarter.
-            #####################################################################
             if not go_back:
                 go_back = "/" # go home, or you just came from home  (so this is in case there's no initial forward slash)
             return redirect(go_back)
